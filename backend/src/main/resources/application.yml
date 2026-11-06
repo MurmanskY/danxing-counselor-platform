@@ -1,0 +1,87 @@
+server:
+  port: ${SERVER_PORT:8080}
+  servlet:
+    session:
+      timeout: 8h
+      cookie:
+        http-only: true
+        secure: ${COOKIE_SECURE:false}
+        same-site: lax
+spring:
+  application:
+    name: danxing-platform
+  datasource:
+    url: ${DATABASE_URL:jdbc:postgresql://localhost:5432/danxing}
+    username: ${POSTGRES_USER:danxing}
+    password: ${POSTGRES_PASSWORD}
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD}
+      timeout: 3s
+  session:
+    redis:
+      namespace: danxing:session
+  cache:
+    type: redis
+    redis:
+      time-to-live: 5m
+      cache-null-values: false
+      key-prefix: 'danxing:cache:'
+  servlet:
+    multipart:
+      max-file-size: 20MB
+      max-request-size: 21MB
+  http:
+    client:
+      connect-timeout: 5s
+      read-timeout: 45s
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true
+  global-config:
+    banner: false
+    db-config:
+      id-type: input
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+  endpoint:
+    health:
+      show-details: never
+      probes:
+        enabled: true
+      group:
+        readiness:
+          include: readinessState,db,redis
+app:
+  bootstrap:
+    username: ${ADMIN_USERNAME:admin}
+    password: ${ADMIN_PASSWORD}
+    counselor-p001:
+      username: ${COUNSELOR_P001_USERNAME:}
+      password: ${COUNSELOR_P001_PASSWORD:}
+    counselor-p002:
+      username: ${COUNSELOR_P002_USERNAME:}
+      password: ${COUNSELOR_P002_PASSWORD:}
+    counselor-p003:
+      username: ${COUNSELOR_P003_USERNAME:}
+      password: ${COUNSELOR_P003_PASSWORD:}
+    counselor-p004:
+      username: ${COUNSELOR_P004_USERNAME:}
+      password: ${COUNSELOR_P004_PASSWORD:}
+    counselor-p005:
+      username: ${COUNSELOR_P005_USERNAME:}
+      password: ${COUNSELOR_P005_PASSWORD:}
+    counselor-p006:
+      username: ${COUNSELOR_P006_USERNAME:}
+      password: ${COUNSELOR_P006_PASSWORD:}
+  seed-enabled: ${SEED_ENABLED:true}
+  minio:
+    endpoint: ${MINIO_ENDPOINT:http://localhost:9000}
+    access-key: ${MINIO_ACCESS_KEY}
+    secret-key: ${MINIO_SECRET_KEY}
+    bucket: ${MINIO_BUCKET:danxing-private}
