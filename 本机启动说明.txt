@@ -1,0 +1,23 @@
+旦行平台 · 本机 Docker 环境
+
+启动：双击项目根目录的「启动-Mac.command」。它会自动打开 Docker Desktop、构建更新并等待服务就绪。
+访问：http://localhost:8080
+停止：双击「停止-Mac.command」，数据和附件会保留。
+
+登录账号：admin（管理员）；counselor-p001 至 counselor-p006（普通辅导员）。
+密码各不相同，保存在项目根目录的隐藏文件 .env。
+用 Finder 打开项目目录后按 Command + Shift + . 显示隐藏文件，查看 ADMIN_PASSWORD 或对应 COUNSELOR_P00x_PASSWORD。
+.env 含本机密码，不要提交或转发；已被 Git 忽略。
+
+命令行操作（先进入项目目录）：
+cd ~/Desktop/danxing-counselor-platform
+docker compose ps                    查看运行状态
+docker compose logs --tail=100 backend 查看后端日志
+docker compose stop                  停止并保留数据
+docker compose up -d                 再次启动
+docker compose up -d --build         源码修改后重新构建并启动
+
+数据存放于 Docker 命名卷中。不要执行 docker compose down -v，除非确实需要清空数据。
+MinIO 控制台：http://localhost:9001，登录信息见 .env 中的 MINIO_ACCESS_KEY 和 MINIO_SECRET_KEY。
+数据库和 Redis 默认只在容器内部开放；平台页面和 MinIO 控制台仅允许本机连接。
+首次构建需要联网，日常启动使用已有镜像。

@@ -1,0 +1,11 @@
+# Use with: docker compose -f compose.yml -f deploy/compose.ecs.yml
+services:
+  backend:
+    image: danxing-cloud-backend:${DANXING_IMAGE_TAG:?Set DANXING_IMAGE_TAG}
+    mem_limit: 1g
+  minio:
+    image: danxing-cloud-minio:${DANXING_IMAGE_TAG:?Set DANXING_IMAGE_TAG}
+  frontend:
+    image: danxing-cloud-frontend:${DANXING_IMAGE_TAG:?Set DANXING_IMAGE_TAG}
+    ports: !override
+      - "0.0.0.0:${WEB_PORT:-80}:80"

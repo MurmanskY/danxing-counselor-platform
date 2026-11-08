@@ -1,0 +1,89 @@
+name: Deploy to ECS
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      - 'infra/**'
+      - 'compose.yml'
+      - 'deploy/**'
+      - 'scripts/init-env.py'
+      - '.github/workflows/deploy-ecs.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: danxing-ecs-production
+  cancel-in-progress: false
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      DANXING_IMAGE_TAG: ${{ github.sha }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-buildx-action@v3
+      - name: Prepare build environment
+        run: python3 scripts/init-env.py
+      - name: Build backend (including tests)
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          platforms: linux/amd64
+          load: true
+          tags: danxing-cloud-backend:${{ github.sha }}
+          cache-from: type=gha,scope=backend
+          cache-to: type=gha,mode=max,scope=backend
+      - name: Build frontend
+        uses: docker/build-push-action@v6
+        with:
+          context: frontend
+          platforms: linux/amd64
+          load: true
+          tags: danxing-cloud-frontend:${{ github.sha }}
+          cache-from: type=gha,scope=frontend
+          cache-to: type=gha,mode=max,scope=frontend
+      - name: Build object storage
+        uses: docker/build-push-action@v6
+        with:
+          context: infra/minio
+          platforms: linux/amd64
+          load: true
+          tags: danxing-cloud-minio:${{ github.sha }}
+          cache-from: type=gha,scope=minio
+          cache-to: type=gha,mode=max,scope=minio
+      - name: Package release
+        run: |
+          set -euo pipefail
+          mkdir -p "$RUNNER_TEMP/release"
+          git archive HEAD | tar -x -C "$RUNNER_TEMP/release"
+          docker pull postgres:16-alpine
+          docker pull redis:7.4-alpine
+          docker save "danxing-cloud-backend:$DANXING_IMAGE_TAG" "danxing-cloud-frontend:$DANXING_IMAGE_TAG" "danxing-cloud-minio:$DANXING_IMAGE_TAG" postgres:16-alpine redis:7.4-alpine | gzip -1 > "$RUNNER_TEMP/release/images.tar.gz"
+          printf 'DANXING_IMAGE_TAG=%s\n' "$DANXING_IMAGE_TAG" > "$RUNNER_TEMP/release/release.env"
+          # Source archives must not contain local credentials or raw profile spreadsheets.
+          rm -rf "$RUNNER_TEMP/release/profile" "$RUNNER_TEMP/release/.github"
+      - name: Upload and deploy
+        env:
+          ECS_HOST: ${{ secrets.ECS_HOST }}
+          ECS_SSH_KEY: ${{ secrets.ECS_SSH_KEY }}
+          ECS_KNOWN_HOSTS: ${{ secrets.ECS_KNOWN_HOSTS }}
+        run: |
+          set -euo pipefail
+          test -n "$ECS_HOST" && test -n "$ECS_SSH_KEY" && test -n "$ECS_KNOWN_HOSTS"
+          install -d -m 700 "$RUNNER_TEMP/ssh"
+          printf '%s\n' "$ECS_SSH_KEY" > "$RUNNER_TEMP/ssh/key"
+          printf '%s\n' "$ECS_KNOWN_HOSTS" > "$RUNNER_TEMP/ssh/known_hosts"
+          chmod 600 "$RUNNER_TEMP/ssh/"*
+          opts=(-i "$RUNNER_TEMP/ssh/key" -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile="$RUNNER_TEMP/ssh/known_hosts" -o ServerAliveInterval=30)
+          target="/opt/danxing/releases/$DANXING_IMAGE_TAG"
+          ssh "${opts[@]}" "root@$ECS_HOST" "mkdir -p '$target' && chmod 700 '$target'"
+          rsync -az --timeout=120 -e "ssh -i $RUNNER_TEMP/ssh/key -o IdentitiesOnly=yes -o StrictHostKeyChecking=yes -o UserKnownHostsFile=$RUNNER_TEMP/ssh/known_hosts -o ServerAliveInterval=30" "$RUNNER_TEMP/release/" "root@$ECS_HOST:$target/"
+          ssh "${opts[@]}" "root@$ECS_HOST" "bash '$target/deploy/apply-release.sh' '$target'"
+          echo '### ECS deployment verified' >> "$GITHUB_STEP_SUMMARY"
+          echo "Release: $DANXING_IMAGE_TAG" >> "$GITHUB_STEP_SUMMARY"
+      - name: Remove temporary credentials
+        if: always()
+        run: rm -rf "$RUNNER_TEMP/ssh"

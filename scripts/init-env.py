@@ -18,6 +18,10 @@ values = {
     'COUNSELOR_P003_PASSWORD': secrets.token_hex(16),
     'COUNSELOR_P004_USERNAME': 'counselor-p004',
     'COUNSELOR_P004_PASSWORD': secrets.token_hex(16),
+    'COUNSELOR_P005_USERNAME': 'counselor-p005',
+    'COUNSELOR_P005_PASSWORD': secrets.token_hex(16),
+    'COUNSELOR_P006_USERNAME': 'counselor-p006',
+    'COUNSELOR_P006_PASSWORD': secrets.token_hex(16),
     'POSTGRES_PASSWORD': secrets.token_hex(24), 'REDIS_PASSWORD': secrets.token_hex(24),
     'MINIO_ACCESS_KEY': 'danxing-storage', 'MINIO_SECRET_KEY': secrets.token_hex(24),
     'WEB_PORT': '8080', 'COOKIE_SECURE': 'false'
