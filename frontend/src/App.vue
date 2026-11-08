@@ -70,14 +70,6 @@
           }}</router-link>
         </nav>
         <div class="user-menu">
-          <template v-if="state.user?.role === 'COUNSELOR_ADMIN'">
-            <button class="header-icon" title="全站搜索" aria-label="全站搜索">
-              ⌕
-            </button>
-            <button class="header-icon" title="通知" aria-label="通知">
-              🔔<i class="bell-dot"></i>
-            </button>
-          </template>
           <button class="user-trigger" @click="menu = !menu">
             <img
               v-if="avatarUrl(state.user.avatarFileId)"

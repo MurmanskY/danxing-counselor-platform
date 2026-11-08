@@ -65,6 +65,7 @@ services:
       COUNSELOR_P006_USERNAME: ${COUNSELOR_P006_USERNAME:-}
       COUNSELOR_P006_PASSWORD: ${COUNSELOR_P006_PASSWORD:-}
       COOKIE_SECURE: "false"
+      TZ: ${TZ:-Asia/Shanghai}
     depends_on:
       postgres: {condition: service_healthy}
       redis: {condition: service_healthy}
