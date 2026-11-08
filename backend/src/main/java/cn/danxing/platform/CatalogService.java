@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 public class CatalogService {
     private final SourceRecordMapper records;private final ObjectMapper json;
     public CatalogService(SourceRecordMapper r,ObjectMapper j){records=r;json=j;}
-    @Cacheable("catalog") public String recordsJson()throws Exception{return json.writeValueAsString(records.selectList(new QueryWrapper<SourceRecord>().orderByAsc("id")));}
+    @Cacheable(value="catalog",sync=true) public String recordsJson()throws Exception{return json.writeValueAsString(records.selectList(new QueryWrapper<SourceRecord>().orderByAsc("id")));}
     public SourceRecord require(String id,String kind){
         SourceRecord r=records.selectById(id);
         if(r==null||(kind!=null&&!kind.equals(r.kind)))throw ApiException.bad("关联资料不存在或类型不符");

@@ -3,9 +3,14 @@ import org.slf4j.*;
 import org.springframework.cache.*;
 import org.springframework.cache.interceptor.*;
 import org.springframework.context.annotation.*;
+import org.springframework.data.redis.cache.*;
+import org.springframework.data.redis.connection.*;
 @Configuration
 public class CacheConfig {
     private static final Logger log=LoggerFactory.getLogger(CacheConfig.class);
+    @Bean RedisCacheWriter redisCacheWriter(RedisConnectionFactory connectionFactory){
+        return RedisCacheWriter.lockingRedisCacheWriter(connectionFactory);
+    }
     @Bean CacheErrorHandler cacheErrorHandler(){
         return new SimpleCacheErrorHandler(){
             @Override public void handleCacheGetError(RuntimeException exception,Cache cache,Object key){

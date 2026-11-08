@@ -58,7 +58,8 @@ public class AuthController {
         if(profileRoles.isEmpty())throw ApiException.bad("请选择有效的辅导员画像");
         if(!in.role().equals(profileRoles.get(0)))throw ApiException.bad("所选画像的角色与账号角色不匹配");
         AppUser u=new AppUser();u.id=UUID.randomUUID().toString();u.username=in.username();u.passwordHash=encoder.encode(in.password());u.displayName=in.displayName();u.role=in.role();u.profileId=in.profileId();u.createdAt=Instant.now();
-        users.insert(u);audit.write("创建账号",u.id,u.username);return roles.enrich(u);
+        try{users.insert(u);}catch(org.springframework.dao.DuplicateKeyException e){throw ApiException.bad("该账号已存在");}
+        audit.write("创建账号",u.id,u.username);return roles.enrich(u);
     }
     @GetMapping("/profiles/avatars") public Map<String,String> profileAvatars(){
         Map<String,String> result=new LinkedHashMap<>();

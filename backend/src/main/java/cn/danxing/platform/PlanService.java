@@ -26,8 +26,10 @@ public class PlanService {
     @Transactional public void toggle(String id,boolean done){
         Task t=tasks.selectById(id);if(t==null)throw ApiException.missing();Plan p=owned(t.planId);
         t.done=done;tasks.updateById(t);
-        long left=tasks.selectCount(new QueryWrapper<Task>().eq("plan_id",p.id).eq("done",false));
-        p.status=left==0?"已完成":"进行中";p.updatedAt=Instant.now();plans.updateById(p);audit.write("更新计划任务",id,done?"完成":"重新打开");
+        plans.update(null,new UpdateWrapper<Plan>().eq("id",p.id)
+            .setSql("status=CASE WHEN (SELECT count(*) FROM tasks WHERE plan_id='"+p.id+"' AND done=false)=0 THEN '已完成' ELSE '进行中' END")
+            .set("updated_at",Instant.now()));
+        audit.write("更新计划任务",id,done?"完成":"重新打开");
     }
     @Transactional public void delete(String id){Plan p=owned(id);plans.deleteById(id);audit.write("删除发展计划",id,p.title);}
     public static String cell(String s){String v=Objects.toString(s,"");String lead=v.stripLeading();if(!lead.isEmpty()&&"=+@-".indexOf(lead.charAt(0))>=0)v="'"+v;return "\""+v.replace("\"","\"\"")+"\"";}

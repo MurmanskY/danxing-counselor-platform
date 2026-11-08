@@ -36,7 +36,8 @@ frontend (Nginx)  ── /api 反向代理 ──►  backend (Spring Boot)
 
 - 首次启动由 Flyway 建表，`Bootstrap` 自动导入 `backend/src/main/resources/seed.json`（579 条演示数据：6 份辅导员画像、190 条荣誉、16+1 个工作室、发展日历事项等），并按 `.env` 创建初始账号。
 - 头像/附件为文件流：二进制存 MinIO 私有桶，元数据存 PostgreSQL `file_assets`，`app_users.avatar_file_id` 关联，请勿手工写库。
-- 目录接口带 Redis 缓存（TTL 5 分钟），缓存异常自动回源不中断服务；直接改库后需 `docker compose restart redis backend` 才会在前端生效。
+- 目录接口带 Redis 缓存（TTL 5 分钟），缓存异常自动回源不中断服务；冷启动/过期瞬间的并发请求由锁机制合并为一次回源（防缓存击穿）；直接改库后需 `docker compose restart redis backend` 才会在前端生效。
+- 连接池（Hikari）上限 20；计划任务状态由单条原子 SQL 刷新，并发操作不会写脏状态。
 - 会话存 Redis（8 小时），后端重启不丢登录；登录连续失败 5 次将按「账号 + IP」临时锁定 10 分钟。
 - 容器默认时区 `Asia/Shanghai`（影响发展日历的"尚未开始"筛选），可通过环境变量 `TZ` 覆盖。
 
