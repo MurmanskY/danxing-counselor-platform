@@ -5353,100 +5353,8 @@ body {
   letter-spacing: 1px;
 }
 
-/* ===== 荣誉殿堂页头：整幅背景横幅 ===== */
-.honor-heading {
-  min-height: 210px;
-  padding: 36px 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background:
-    linear-gradient(90deg, #f5f8fd 0%, #f5f8fdd9 30%, #ffffff00 62%),
-    url("/honor-banner.jpg") right center / cover no-repeat;
-  border: 1px solid #e3edf8;
-  border-radius: 14px;
-  box-shadow: 0 10px 26px #00409812;
-  overflow: hidden;
-  margin-bottom: 22px;
-}
-@media (max-width: 760px) {
-  .honor-heading {
-    min-height: 130px;
-    padding: 22px 20px;
-    background:
-      linear-gradient(90deg, #f5f8fd 0%, #f5f8fdf2 55%, #f5f8fde0 100%),
-      url("/honor-banner.jpg") right center / cover no-repeat;
-  }
-}
 
-/* ===== 发展日历页头：整幅背景横幅（同荣誉殿堂） ===== */
-.calendar-heading-banner {
-  min-height: 210px;
-  padding: 36px 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background:
-    linear-gradient(90deg, #f5f8fd 0%, #f5f8fdd9 30%, #ffffff00 62%),
-    url("/calendar-banner.jpg") right center / cover no-repeat;
-  border: 1px solid #e3edf8;
-  border-radius: 14px;
-  box-shadow: 0 10px 26px #00409812;
-  overflow: hidden;
-  margin-bottom: 18px;
-}
-.calendar-heading-banner .cal-title-icon {
-  background: #ffffffd9;
-}
-@media (max-width: 760px) {
-  .calendar-heading-banner {
-    min-height: 130px;
-    padding: 22px 20px;
-    background:
-      linear-gradient(90deg, #f5f8fd 0%, #f5f8fdf2 55%, #f5f8fde0 100%),
-      url("/calendar-banner.jpg") right center / cover no-repeat;
-  }
-}
 
-/* ===== 发展日历筛选胶囊：透明底融入横幅 ===== */
-.calendar-heading-banner .calendar-filters {
-  background: transparent;
-  padding: 0;
-  margin-top: 14px;
-}
-.calendar-heading-banner .calendar-filters button:not(.selected) {
-  color: #33517a;
-  text-shadow: 0 1px 5px #ffffffd9, 0 0 2px #ffffff;
-}
-.calendar-heading-banner .calendar-filters button:not(.selected):hover {
-  background: #ffffff8c;
-}
-
-/* ===== 资源中心页头：整幅背景横幅（同荣誉殿堂） ===== */
-.resources-heading {
-  min-height: 210px;
-  padding: 36px 42px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  background:
-    linear-gradient(90deg, #f5f8fd 0%, #f5f8fdd9 30%, #ffffff00 62%),
-    url("/resources-banner.jpg") right center / cover no-repeat;
-  border: 1px solid #e3edf8;
-  border-radius: 14px;
-  box-shadow: 0 10px 26px #00409812;
-  overflow: hidden;
-  margin-bottom: 20px;
-}
-@media (max-width: 760px) {
-  .resources-heading {
-    min-height: 130px;
-    padding: 22px 20px;
-    background:
-      linear-gradient(90deg, #f5f8fd 0%, #f5f8fdf2 55%, #f5f8fde0 100%),
-      url("/resources-banner.jpg") right center / cover no-repeat;
-  }
-}
 
 /* ===== 页脚两栏布局（移除中间链接后） ===== */
 .site-footer {
@@ -5537,4 +5445,87 @@ body {
 .login-art > img {
   -webkit-mask-image: radial-gradient(170% 140% at 50% 58%, #000 20%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.12) 70%, transparent 88%);
   mask-image: radial-gradient(170% 140% at 50% 58%, #000 20%, rgba(0, 0, 0, 0.4) 50%, rgba(0, 0, 0, 0.12) 70%, transparent 88%);
+}
+
+/* ===== 栏目页氛围底图（荣誉殿堂/发展日历/资源中心 通用） ===== */
+.ambient-page {
+  position: relative;
+}
+.ambient-page::before {
+  content: "";
+  position: absolute;
+  top: -16px;
+  right: -6px;
+  width: min(880px, 66%);
+  height: 470px;
+  background: var(--ambient-img) right top / contain no-repeat;
+  pointer-events: none;
+  z-index: 0;
+  -webkit-mask-image: radial-gradient(85% 85% at 68% 40%, #000 34%, transparent 86%);
+  mask-image: radial-gradient(85% 85% at 68% 40%, #000 34%, transparent 86%);
+}
+.ambient-page > * {
+  position: relative;
+  z-index: 1;
+}
+.honors-page-bg { --ambient-img: url("/honor-banner.png"); }
+.calendar-page-bg { --ambient-img: url("/calendar-banner.png"); }
+.resources-page-bg { --ambient-img: url("/resources-banner.png"); }
+@media (max-width: 760px) {
+  .ambient-page::before {
+    width: 92%;
+    height: 240px;
+    opacity: 0.8;
+  }
+}
+
+/* ===== 氛围底图羽化加强（与 hero 模块同款无痕过渡） ===== */
+.ambient-page::before {
+  -webkit-mask-image: radial-gradient(150% 130% at 72% 38%, #000 16%, rgba(0, 0, 0, 0.45) 42%, rgba(0, 0, 0, 0.14) 62%, transparent 82%);
+  mask-image: radial-gradient(150% 130% at 72% 38%, #000 16%, rgba(0, 0, 0, 0.45) 42%, rgba(0, 0, 0, 0.14) 62%, transparent 82%);
+}
+
+/* ===== 氛围底图羽化极限：左侧边界降至近零 ===== */
+.ambient-page::before {
+  width: min(820px, 58%);
+  -webkit-mask-image: radial-gradient(180% 150% at 78% 42%, #000 8%, rgba(0, 0, 0, 0.3) 34%, rgba(0, 0, 0, 0.06) 56%, transparent 74%);
+  mask-image: radial-gradient(180% 150% at 78% 42%, #000 8%, rgba(0, 0, 0, 0.3) 34%, rgba(0, 0, 0, 0.06) 56%, transparent 74%);
+}
+
+/* ===== 氛围底图位置调整：向左居中 ===== */
+.ambient-page::before {
+  width: min(1000px, 80%);
+  background-position: center top;
+  -webkit-mask-image: radial-gradient(180% 150% at 62% 42%, #000 8%, rgba(0, 0, 0, 0.3) 34%, rgba(0, 0, 0, 0.06) 56%, transparent 74%);
+  mask-image: radial-gradient(180% 150% at 62% 42%, #000 8%, rgba(0, 0, 0, 0.3) 34%, rgba(0, 0, 0, 0.06) 56%, transparent 74%);
+}
+
+/* ===== 氛围底图右边界与内容区对齐 ===== */
+.ambient-page::before {
+  right: 30px;
+}
+@media (max-width: 760px) {
+  .ambient-page::before {
+    right: 18px;
+  }
+}
+
+/* ===== 氛围底图右缘微调（补偿右侧羽化衰减） ===== */
+.ambient-page::before {
+  right: 10px;
+}
+
+/* ===== 氛围底图右缘与卡片边界精确对齐 ===== */
+.ambient-page::before {
+  right: 0;
+}
+
+/* ===== 发展日历：月份网格下移，露出更多背景图 ===== */
+.calendar-page-bg .calendar-scroll {
+  margin-top: 64px;
+}
+@media (max-width: 760px) {
+  .calendar-page-bg .calendar-scroll {
+    margin-top: 24px;
+  }
 }
