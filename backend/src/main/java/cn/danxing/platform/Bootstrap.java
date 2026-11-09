@@ -46,7 +46,7 @@ public class Bootstrap implements ApplicationRunner {
         jdbc.execute("SELECT pg_advisory_xact_lock(271002)");
         if(users.selectCount(new QueryWrapper<AppUser>())==0){
             if(password==null||password.length()<12||password.getBytes(StandardCharsets.UTF_8).length>72)throw new IllegalStateException("ADMIN_PASSWORD must be 12 characters or more, and at most 72 UTF-8 bytes");
-            AppUser u=new AppUser();u.id=UUID.randomUUID().toString();u.username=username;u.passwordHash=encoder.encode(password);u.displayName="汤潮";u.role="COUNSELOR_ADMIN";u.createdAt=Instant.now();users.insert(u);
+            AppUser u=new AppUser();u.id=UUID.randomUUID().toString();u.username=username;u.passwordHash=encoder.encode(password);u.displayName="王静怡";u.role="COUNSELOR_ADMIN";u.createdAt=Instant.now();users.insert(u);
         }
         if(seedEnabled&&jdbc.queryForObject("SELECT count(*) FROM app_meta WHERE key='seed_version'",Integer.class)==0){
             JsonNode seed=json.readTree(new ClassPathResource("seed.json").getInputStream());

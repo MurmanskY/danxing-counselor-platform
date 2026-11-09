@@ -5189,3 +5189,155 @@ body {
 .honor-grid .honor-card small {
   font-size: 10px;
 }
+
+/* ===== 底部统计图标尺寸修复 ===== */
+.metrics .metric-icon {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  margin-bottom: 10px;
+  font-size: 22px;
+  line-height: 1;
+}
+
+/* ===== 底部统计模块精修：大字级、数字突出 ===== */
+.metrics > div {
+  padding: 26px 28px;
+}
+.metrics .metric-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+  font-size: 24px;
+  margin-bottom: 14px;
+}
+.metrics > div > span:not(.metric-icon) {
+  font-size: 15px;
+  font-weight: 600;
+  color: #2c4a6b;
+  letter-spacing: 0.5px;
+}
+.metrics strong {
+  font-family: Georgia, "Songti SC", serif;
+  font-size: 44px;
+  font-weight: 700;
+  color: #004098;
+  margin: 12px 0 6px;
+  line-height: 1.15;
+  font-variant-numeric: tabular-nums;
+}
+.metrics strong small {
+  font-size: 14px;
+  font-weight: 500;
+  color: #7d90a8;
+  font-family: -apple-system, "PingFang SC", sans-serif;
+  margin-left: 2px;
+}
+.metrics p {
+  font-size: 12px;
+  color: #8ba0b8;
+  margin: 0;
+  letter-spacing: 0.3px;
+}
+
+/* ===== Hero 与统计条纵向压缩 ===== */
+.hero {
+  min-height: 300px;
+}
+.hero-copy {
+  padding: 30px 0 22px 40px;
+}
+.hero h1 {
+  font-size: 36px;
+  margin-bottom: 14px;
+  letter-spacing: 1.5px;
+}
+.hero-copy > p:not(.eyebrow) {
+  font-size: 13px;
+  line-height: 1.9;
+}
+.hero-visual img {
+  width: 106%;
+  max-width: none;
+  margin: 0 0 18px -6%;
+}
+.hero-actions {
+  margin: 18px 0;
+}
+.hero-note {
+  margin-top: 16px;
+}
+.round-label {
+  right: 30px;
+  top: 22px;
+  padding: 14px;
+  font-size: 11px;
+}
+.hero-caption {
+  bottom: 12px;
+  right: 26px;
+}
+@media (min-width: 1600px) {
+  .hero {
+    min-height: 330px;
+  }
+}
+
+.metrics {
+  padding: 16px 0;
+  margin: 18px 0 26px;
+}
+.metrics > div {
+  padding: 16px 28px;
+}
+.metrics .metric-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  font-size: 20px;
+  margin-bottom: 10px;
+}
+.metrics > div > span:not(.metric-icon) {
+  font-size: 14px;
+}
+.metrics strong {
+  font-size: 34px;
+  margin: 8px 0 4px;
+}
+.metrics strong small {
+  font-size: 12px;
+}
+.metrics p {
+  font-size: 11px;
+}
+
+/* ===== 管理员筛选栏换行修复 ===== */
+.manager-filterbar {
+  flex-wrap: wrap;
+  overflow-x: visible;
+  row-gap: 10px;
+}
+.mf-search {
+  flex: 1 1 280px;
+  min-width: 240px;
+}
+.mf-selects {
+  flex-wrap: wrap;
+  row-gap: 8px;
+}
+
+/* ===== 筛选栏：搜索框固定宽度，下拉紧凑排列 ===== */
+.mf-search {
+  flex: 0 0 320px;
+  min-width: 0;
+}
+
+/* ===== 筛选栏：搜索框占栏宽一半 ===== */
+.manager-filterbar {
+  align-items: center;
+}
+.mf-search {
+  flex: 0 0 50%;
+}

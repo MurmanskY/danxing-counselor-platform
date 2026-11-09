@@ -109,13 +109,15 @@ export async function uploadAvatar(file) {
   const data = new FormData();
   data.append("file", file);
   state.user = await api("/me/avatar", "POST", data);
-  if (state.user.profileId)
+  // 仅普通辅导员的账号头像会作为“画像头像”展示；管理员账号可能与某画像共用 profileId（如 P001），
+  // 不能把自己的头像写入该画像的映射，否则该画像对应辅导员的头像会跟着变。
+  if (state.user.profileId && state.user.role === "COUNSELOR")
     Vue.set(state.profileAvatars, state.user.profileId, state.user.avatarFileId);
   notify("头像已更新");
 }
 export async function removeAvatar() {
   state.user = await api("/me/avatar", "DELETE");
-  if (state.user.profileId)
+  if (state.user.profileId && state.user.role === "COUNSELOR")
     Vue.set(state.profileAvatars, state.user.profileId, state.user.avatarFileId);
   notify("已恢复默认头像");
 }

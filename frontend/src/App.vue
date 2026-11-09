@@ -60,7 +60,11 @@
             n.label
           }}</router-link>
         </nav>
-        <div class="user-menu">
+        <div
+          class="user-menu"
+          @mouseenter="cancelMenuClose"
+          @mouseleave="scheduleMenuClose"
+        >
           <button class="user-trigger" @click="menu = !menu">
             <img
               v-if="avatarUrl(state.user.avatarFileId)"
@@ -125,6 +129,7 @@ export default {
     signing: false,
     loginError: "",
     menu: false,
+    menuTimer: null,
   }),
   computed: {
     nav() {
@@ -171,6 +176,18 @@ export default {
     logout,
     run,
     avatarUrl,
+    scheduleMenuClose() {
+      this.cancelMenuClose();
+      this.menuTimer = setTimeout(() => {
+        this.menu = false;
+      }, 250);
+    },
+    cancelMenuClose() {
+      if (this.menuTimer) {
+        clearTimeout(this.menuTimer);
+        this.menuTimer = null;
+      }
+    },
     async signIn() {
       this.signing = true;
       this.loginError = "";

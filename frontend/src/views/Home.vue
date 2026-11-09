@@ -926,7 +926,7 @@ export default {
     overviewProfiles() {
       const list = [...this.managedProfiles];
       const own = this.activeProfile;
-      if (own && !list.some((p) => p.id === own.id)) list.unshift(own);
+      if (own && !list.some((p) => p.id === own.id)) list.push(own);
       return list;
     },
     allDetailedProfiles() {
@@ -971,7 +971,7 @@ export default {
         ? Math.round((active / profiles.length) * 1000) / 10
         : 0;
       return [
-        { label: "辅导员画像总数", value: profiles.length, unit: "人", icon: "👥", bg: "#e9f2ff", note: "含本人及管理团队", delta: 1, deltaUnit: "人" },
+        { label: "辅导员画像总数", value: profiles.length, unit: "人", icon: "👥", bg: "#e9f2ff", note: "团队全部成员", delta: 1, deltaUnit: "人" },
         { label: "优秀辅导员", value: excellent, unit: "人", icon: "🏆", bg: "#fdf3e0", note: "有代表性荣誉", delta: 1, deltaUnit: "人" },
         { label: "青年辅导员", value: young, unit: "人", icon: "🌱", bg: "#e6f7ee", note: "工作 5 年以内", delta: 1, deltaUnit: "人" },
         { label: "已有关联成果", value: this.teamAchievementCount, unit: "条", icon: "📄", bg: "#f0ebff", note: "荣誉·论文·项目", delta: 6, deltaUnit: "条" },
