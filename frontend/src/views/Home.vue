@@ -811,7 +811,7 @@
         <p>{{ m.note }}</p>
       </div>
     </section>
-    <div class="home-columns">
+    <div v-if="!isManager" class="home-columns">
       <section class="panel">
         <div class="section-head">
           <div>
