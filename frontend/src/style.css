@@ -5153,3 +5153,39 @@ body {
   background: color-mix(in srgb, var(--ev-bar) 13%, #ffffff);
   box-shadow: 0 8px 20px color-mix(in srgb, var(--ev-bar) 22%, transparent);
 }
+
+/* ===== 首页对齐与荣誉网格 ===== */
+.insight-grid {
+  align-items: stretch;
+}
+.insight-panel {
+  height: 100%;
+}
+.honor-grid {
+  flex: 1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  align-content: center;
+  padding-top: 10px;
+}
+.honor-grid .honor-card {
+  flex: none;
+  width: auto;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 10px 11px;
+}
+.honor-grid .honor-trophy {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  font-size: 17px;
+}
+.honor-grid .honor-card strong {
+  font-size: 12px;
+  -webkit-line-clamp: 2;
+}
+.honor-grid .honor-card small {
+  font-size: 10px;
+}

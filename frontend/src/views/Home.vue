@@ -624,21 +624,17 @@
           <p>展示个人获得的重要荣誉奖项</p>
           <router-link to="/honors">查看更多 ›</router-link>
         </div>
-        <div v-if="linkedHonors.length" class="honor-carousel">
-          <button class="carousel-arrow left" @click="scrollHonors(-1)">‹</button>
-          <div ref="honorTrack" class="honor-track">
-            <article v-for="h in linkedHonors" :key="h.id" class="honor-card">
-              <span class="honor-trophy">🏆</span>
-              <div>
-                <span class="honor-year">{{ honorYear(h) }}</span>
-                <strong>{{ h.title }}</strong>
-                <small>{{
-                  h.payload["光荣册历史单位"] || h.department || "授予单位待补充"
-                }}</small>
-              </div>
-            </article>
-          </div>
-          <button class="carousel-arrow right" @click="scrollHonors(1)">›</button>
+        <div v-if="linkedHonors.length" class="honor-grid">
+          <article v-for="h in linkedHonors.slice(0, 4)" :key="h.id" class="honor-card">
+            <span class="honor-trophy">🏆</span>
+            <div>
+              <span class="honor-year">{{ honorYear(h) }}</span>
+              <strong>{{ h.title }}</strong>
+              <small>{{
+                h.payload["光荣册历史单位"] || h.department || "授予单位待补充"
+              }}</small>
+            </div>
+          </article>
         </div>
         <p v-else class="muted chart-empty">暂无关联荣誉记录。</p>
       </div>
@@ -1503,10 +1499,6 @@ export default {
     newCalendar,
     showRecord,
     profileAvatarUrl,
-    scrollHonors(direction) {
-      const track = this.$refs.honorTrack;
-      if (track) track.scrollBy({ left: direction * 216, behavior: "smooth" });
-    },
     honorYear(honor) {
       return honor.payload?.["奖励时间"] || "";
     },

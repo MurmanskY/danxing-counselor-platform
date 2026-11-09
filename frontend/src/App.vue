@@ -24,7 +24,7 @@
       </div>
       <form class="login-form" @submit.prevent="signIn">
         <p class="eyebrow">WELCOME BACK</p>
-        <h2>欢迎回到旦行</h2>
+        <h2>欢迎回到旦行无妨</h2>
         <p class="muted">登录你的职业成长工作台</p>
         <label
           >账号<input
@@ -53,17 +53,8 @@
       >
         <router-link to="/" class="brand"
           ><span class="brand-mark">旦</span>
-          <div>
-            {{
-              state.user?.role === "COUNSELOR_ADMIN"
-                ? "复旦大学辅导员荣誉与发展平台"
-                : "旦行"
-            }}<small>{{
-              state.user?.role === "COUNSELOR_ADMIN"
-                ? "FUDAN UNIVERSITY"
-                : "辅导员职业发展数据平台"
-            }}</small></div
-        ></router-link>
+          <div>旦行<small>辅导员职业发展数据平台</small></div></router-link
+        >
         <nav class="main-nav">
           <router-link v-for="n in nav" :key="n.path" :to="n.path" exact>{{
             n.label
