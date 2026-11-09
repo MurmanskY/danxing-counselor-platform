@@ -799,7 +799,7 @@
       </div>
       <div class="hero-visual">
         <span class="round-label">育人有方<br />成长有路</span
-        ><img src="/danxing-campus.svg" alt="绿树环绕的校园建筑" />
+        ><img src="/danxing-campus-v3.png" alt="绿树环绕的校园建筑" />
         <div class="hero-caption">YOUR NEXT CHAPTER STARTS HERE</div>
       </div>
     </section>

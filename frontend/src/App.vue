@@ -20,7 +20,7 @@
           <h1>以初心为起点<br />让成长有方向</h1>
           <p>连接育人经验，记录每一步专业成长。</p>
         </div>
-        <img src="/danxing-campus.svg" alt="校园建筑与绿树插画" />
+        <img src="/danxing-campus-v3.png" alt="校园建筑与绿树插画" />
       </div>
       <form class="login-form" @submit.prevent="signIn">
         <p class="eyebrow">WELCOME BACK</p>
