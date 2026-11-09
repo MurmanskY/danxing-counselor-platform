@@ -786,7 +786,7 @@
         <p>
           让育人积累被看见，让专业成长有路径。<br />在旦行，发现你的下一种可能。
         </p>
-        <div class="hero-actions">
+        <div v-if="!isManager" class="hero-actions">
           <router-link class="primary" to="/routes"
             >探索成长路线 <span>↗</span></router-link
           ><router-link class="light-button" to="/manage/plans"

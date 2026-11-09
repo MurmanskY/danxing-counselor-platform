@@ -4,6 +4,8 @@ import cn.danxing.platform.mapper.*;
 import cn.danxing.platform.model.*;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.fasterxml.jackson.databind.*;
+import io.minio.*;
+import org.slf4j.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.*;
 import org.springframework.core.io.ClassPathResource;
@@ -11,6 +13,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
+import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.List;
@@ -18,8 +21,11 @@ import java.util.UUID;
 
 @Component
 public class Bootstrap implements ApplicationRunner {
+    private static final Logger log=LoggerFactory.getLogger(Bootstrap.class);
     private final AppUserMapper users; private final SourceRecordMapper records; private final JdbcTemplate jdbc;
     private final ObjectMapper json;private final PasswordEncoder encoder;
+    private final MinioClient minio;
+    @Value("${app.minio.bucket}") String bucket;
     @Value("${app.bootstrap.username}") String username;
     @Value("${app.bootstrap.password}") String password;
     @Value("${app.bootstrap.counselor-p002.username:}") String counselorP002Username;
@@ -35,7 +41,7 @@ public class Bootstrap implements ApplicationRunner {
     @Value("${app.bootstrap.counselor-p006.username:}") String counselorP006Username;
     @Value("${app.bootstrap.counselor-p006.password:}") String counselorP006Password;
     @Value("${app.seed-enabled}") boolean seedEnabled;
-    public Bootstrap(AppUserMapper u,SourceRecordMapper r,JdbcTemplate j,ObjectMapper o,PasswordEncoder p){users=u;records=r;jdbc=j;json=o;encoder=p;}
+    public Bootstrap(AppUserMapper u,SourceRecordMapper r,JdbcTemplate j,ObjectMapper o,PasswordEncoder p,MinioClient m){users=u;records=r;jdbc=j;json=o;encoder=p;minio=m;}
     @Override @Transactional public void run(ApplicationArguments args)throws Exception{
         jdbc.execute("SELECT pg_advisory_xact_lock(271002)");
         if(users.selectCount(new QueryWrapper<AppUser>())==0){
@@ -77,6 +83,33 @@ public class Bootstrap implements ApplicationRunner {
         ensureInitialCounselor("P004", counselorP004Username, counselorP004Password);
         ensureInitialCounselor("P005", counselorP005Username, counselorP005Password);
         ensureInitialCounselor("P006", counselorP006Username, counselorP006Password);
+        seedBundledAvatars();
+    }
+
+    /** 将打包在 resources/avatars/<username>.png 的内置头像导入对象存储并关联账号（仅对未设置头像的账号生效）。 */
+    private void seedBundledAvatars(){
+        try{
+            if(!minio.bucketExists(BucketExistsArgs.builder().bucket(bucket).build()))
+                minio.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
+            for(AppUser u:users.selectList(null)){
+                if(u.avatarFileId!=null)continue;
+                String name=u.username;
+                if(!new ClassPathResource("avatars/"+name+".png").exists()&&new ClassPathResource("avatars/counselor-p001.png").exists()&&"admin".equals(name))name="counselor-p001";
+                ClassPathResource res=new ClassPathResource("avatars/"+name+".png");
+                if(!res.exists())continue;
+                byte[] data;
+                try(InputStream in=res.getInputStream()){data=in.readAllBytes();}
+                String fileId=UUID.randomUUID().toString();
+                String objectKey=u.id+"/"+fileId;
+                minio.putObject(PutObjectArgs.builder().bucket(bucket).object(objectKey).stream(new ByteArrayInputStream(data),data.length,-1).contentType("image/png").build());
+                jdbc.update("INSERT INTO file_assets(id,owner_id,record_id,original_name,object_key,content_type,size_bytes,created_at) VALUES (?,?,NULL,?,?,?,?,now())",
+                    fileId,u.id,name+".png",objectKey,"image/png",(long)data.length);
+                jdbc.update("UPDATE app_users SET avatar_file_id=? WHERE id=?",fileId,u.id);
+                log.info("已为账号 {} 导入内置头像",u.username);
+            }
+        }catch(Exception e){
+            log.warn("内置头像导入失败（不影响系统启动）：{}",e.toString());
+        }
     }
 
     private void ensureInitialCounselor(String profileId, String accountUsername, String accountPassword){
