@@ -5529,3 +5529,50 @@ body {
     margin-top: 24px;
   }
 }
+
+/* ===== 发展日历：卡片不压底图 ===== */
+.calendar-page-bg .calendar-scroll {
+  margin-top: 150px;
+}
+@media (max-width: 760px) {
+  .calendar-page-bg .calendar-scroll {
+    margin-top: 40px;
+  }
+}
+
+/* ===== 发展日历：底图缩小 + 柔光过渡 + 卡片上移 ===== */
+.calendar-page-bg::before {
+  width: min(760px, 58%);
+  height: 340px;
+  background:
+    radial-gradient(72% 85% at 62% 40%, #f4f8fe 0%, #f4f8fe66 50%, transparent 76%),
+    var(--ambient-img) center top / contain no-repeat;
+  -webkit-mask-image: radial-gradient(160% 150% at 62% 36%, #000 12%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0.1) 60%, transparent 78%);
+  mask-image: radial-gradient(160% 150% at 62% 36%, #000 12%, rgba(0, 0, 0, 0.4) 40%, rgba(0, 0, 0, 0.1) 60%, transparent 78%);
+}
+.calendar-page-bg .calendar-scroll {
+  margin-top: 72px;
+}
+@media (max-width: 760px) {
+  .calendar-page-bg .calendar-scroll {
+    margin-top: 28px;
+  }
+}
+
+/* ===== 发展日历：底图加宽，左缘靠近提示文字 ===== */
+.calendar-page-bg::before {
+  width: min(900px, 68%);
+  height: 380px;
+}
+.calendar-page-bg .calendar-scroll {
+  margin-top: 90px;
+}
+
+/* ===== 发展日历：底图宽度回调 ===== */
+.calendar-page-bg::before {
+  width: min(830px, 62%);
+  height: 360px;
+}
+.calendar-page-bg .calendar-scroll {
+  margin-top: 80px;
+}
