@@ -83,18 +83,21 @@ public class Bootstrap implements ApplicationRunner {
         ensureInitialCounselor("P004", counselorP004Username, counselorP004Password);
         ensureInitialCounselor("P005", counselorP005Username, counselorP005Password);
         ensureInitialCounselor("P006", counselorP006Username, counselorP006Password);
-        seedBundledAvatars();
+        // 历史环境已创建过显示名为"汤潮"的管理员账号的，自动纠正为王静怡并强制重设头像
+        int renamed=jdbc.update("UPDATE app_users SET display_name='王静怡' WHERE role='COUNSELOR_ADMIN' AND display_name='汤潮'");
+        seedBundledAvatars(renamed>0);
     }
 
-    /** 将打包在 resources/avatars/<username>.png 的内置头像导入对象存储并关联账号（仅对未设置头像的账号生效）。 */
-    private void seedBundledAvatars(){
+    /** 将打包在 resources/avatars/<username>.png 的内置头像导入对象存储并关联账号（仅对未设置头像的账号生效；forceAdmin 时强制重设 admin 头像）。 */
+    private void seedBundledAvatars(boolean forceAdmin){
         try{
             if(!minio.bucketExists(BucketExistsArgs.builder().bucket(bucket).build()))
                 minio.makeBucket(MakeBucketArgs.builder().bucket(bucket).build());
             for(AppUser u:users.selectList(null)){
-                if(u.avatarFileId!=null)continue;
+                boolean force=forceAdmin&&"admin".equals(u.username);
+                if(u.avatarFileId!=null&&!force)continue;
+                if(force){jdbc.update("UPDATE app_users SET avatar_file_id=NULL WHERE id=?",u.id);}
                 String name=u.username;
-                if(!new ClassPathResource("avatars/"+name+".png").exists()&&new ClassPathResource("avatars/counselor-p001.png").exists()&&"admin".equals(name))name="counselor-p001";
                 ClassPathResource res=new ClassPathResource("avatars/"+name+".png");
                 if(!res.exists())continue;
                 byte[] data;
