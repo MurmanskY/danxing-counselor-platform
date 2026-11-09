@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@500;700&display=swap");
 :root {
   font-family:
     -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC",
@@ -5340,4 +5341,114 @@ body {
 }
 .mf-search {
   flex: 0 0 50%;
+}
+
+/* ===== 页面主标题统一为思源黑体加粗 ===== */
+.page-heading h1,
+.manager-banner h1,
+.counselor-profile-copy h1 {
+  font-family: "Noto Sans SC", "Source Han Sans SC", "思源黑体", -apple-system,
+    "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+/* ===== 荣誉殿堂页头：整幅背景横幅 ===== */
+.honor-heading {
+  min-height: 210px;
+  padding: 36px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    linear-gradient(90deg, #f5f8fd 0%, #f5f8fdd9 30%, #ffffff00 62%),
+    url("/honor-banner.jpg") right center / cover no-repeat;
+  border: 1px solid #e3edf8;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px #00409812;
+  overflow: hidden;
+  margin-bottom: 22px;
+}
+@media (max-width: 760px) {
+  .honor-heading {
+    min-height: 130px;
+    padding: 22px 20px;
+    background:
+      linear-gradient(90deg, #f5f8fd 0%, #f5f8fdf2 55%, #f5f8fde0 100%),
+      url("/honor-banner.jpg") right center / cover no-repeat;
+  }
+}
+
+/* ===== 发展日历页头：整幅背景横幅（同荣誉殿堂） ===== */
+.calendar-heading-banner {
+  min-height: 210px;
+  padding: 36px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    linear-gradient(90deg, #f5f8fd 0%, #f5f8fdd9 30%, #ffffff00 62%),
+    url("/calendar-banner.jpg") right center / cover no-repeat;
+  border: 1px solid #e3edf8;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px #00409812;
+  overflow: hidden;
+  margin-bottom: 18px;
+}
+.calendar-heading-banner .cal-title-icon {
+  background: #ffffffd9;
+}
+@media (max-width: 760px) {
+  .calendar-heading-banner {
+    min-height: 130px;
+    padding: 22px 20px;
+    background:
+      linear-gradient(90deg, #f5f8fd 0%, #f5f8fdf2 55%, #f5f8fde0 100%),
+      url("/calendar-banner.jpg") right center / cover no-repeat;
+  }
+}
+
+/* ===== 发展日历筛选胶囊：透明底融入横幅 ===== */
+.calendar-heading-banner .calendar-filters {
+  background: transparent;
+  padding: 0;
+  margin-top: 14px;
+}
+.calendar-heading-banner .calendar-filters button:not(.selected) {
+  color: #33517a;
+  text-shadow: 0 1px 5px #ffffffd9, 0 0 2px #ffffff;
+}
+.calendar-heading-banner .calendar-filters button:not(.selected):hover {
+  background: #ffffff8c;
+}
+
+/* ===== 资源中心页头：整幅背景横幅（同荣誉殿堂） ===== */
+.resources-heading {
+  min-height: 210px;
+  padding: 36px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background:
+    linear-gradient(90deg, #f5f8fd 0%, #f5f8fdd9 30%, #ffffff00 62%),
+    url("/resources-banner.jpg") right center / cover no-repeat;
+  border: 1px solid #e3edf8;
+  border-radius: 14px;
+  box-shadow: 0 10px 26px #00409812;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+@media (max-width: 760px) {
+  .resources-heading {
+    min-height: 130px;
+    padding: 22px 20px;
+    background:
+      linear-gradient(90deg, #f5f8fd 0%, #f5f8fdf2 55%, #f5f8fde0 100%),
+      url("/resources-banner.jpg") right center / cover no-repeat;
+  }
+}
+
+/* ===== 页脚两栏布局（移除中间链接后） ===== */
+.site-footer {
+  grid-template-columns: 1fr auto;
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <header class="page-heading calendar-heading">
+    <header class="page-heading calendar-heading-banner">
       <div>
         <p class="eyebrow cal-eyebrow">MAKE ROOM FOR GROWTH</p>
         <h1 class="cal-title"><span class="cal-title-icon">▦</span>发展日历</h1>

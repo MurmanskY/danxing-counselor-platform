@@ -103,8 +103,7 @@
       </div>
       <footer class="site-footer">
         <div><strong>旦行</strong><span>伴你走好育人路上的每一步</span></div>
-        <router-link to="/manage/data">数据来源与核验说明</router-link
-        ><small>历史资料仅供参考 · 个人成长由你定义</small>
+        <small>开发团队：王囡、杨娅雯、袁懿、王骏飞</small>
       </footer>
       <nav class="mobile-nav">
         <router-link v-for="n in nav" :key="n.path" :to="n.path" exact

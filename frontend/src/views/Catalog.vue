@@ -1,6 +1,12 @@
 <template>
   <div>
-    <header class="page-heading">
+    <header
+      class="page-heading"
+      :class="{
+        'honor-heading': section === 'honors',
+        'resources-heading': section === 'resources',
+      }"
+    >
       <p class="eyebrow">{{ info.english }}</p>
       <h1>{{ info.title }}</h1>
       <p>{{ info.subtitle }}</p>
