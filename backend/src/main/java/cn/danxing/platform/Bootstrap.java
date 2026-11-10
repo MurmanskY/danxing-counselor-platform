@@ -58,6 +58,7 @@ public class Bootstrap implements ApplicationRunner {
             }
             jdbc.update("INSERT INTO app_meta(key,value) VALUES ('seed_version','original-567-v1')");
         }
+        applyDataFixes();
         ensureCounselorProfiles();
         jdbc.update("""
             UPDATE app_users u SET profile_id=cp.profile_id
@@ -86,6 +87,23 @@ public class Bootstrap implements ApplicationRunner {
         // 历史环境已创建过显示名为"汤潮"的管理员账号的，自动纠正为王静怡并强制重设头像
         int renamed=jdbc.update("UPDATE app_users SET display_name='王静怡' WHERE role='COUNSELOR_ADMIN' AND display_name='汤潮'");
         seedBundledAvatars(renamed>0);
+    }
+
+    /** 数据修正（幂等）：每次启动自动执行，仅当字段缺失或为“无”时补齐，不会覆盖已有真实数据。 */
+    private void applyDataFixes(){
+        try{
+            int fixed=jdbc.update("""
+                UPDATE source_records SET payload = payload || jsonb_build_object(
+                  '发表著作','1. 《数智时代高校思想政治教育：理念、方法与实践》，复旦大学出版社（专著），2025.09，排名第1',
+                  '科研项目','1. 高校数字思政场景化育人机制研究（校级，主持），复旦大学，2025.01-2026.12，在研')
+                WHERE id='P001'
+                  AND (payload->>'发表著作' IS NULL OR payload->>'发表著作'='无'
+                       OR payload->>'科研项目' IS NULL OR payload->>'科研项目'='无')
+                """);
+            if(fixed>0)log.info("数据修正已应用：P001 著作/科研项目补齐（{} 条）",fixed);
+        }catch(Exception e){
+            log.warn("数据修正执行失败（不影响系统启动）：{}",e.toString());
+        }
     }
 
     /** 将打包在 resources/avatars/<username>.png 的内置头像导入对象存储并关联账号（仅对未设置头像的账号生效；forceAdmin 时强制重设 admin 头像）。 */
