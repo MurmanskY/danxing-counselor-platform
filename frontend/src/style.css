@@ -5848,3 +5848,43 @@ body {
   cursor: default;
 }
 /* 保留悬浮效果，但不跳转 */
+
+/* ===== 资料计数移到 Tab 右侧，提升背景图上可读性 ===== */
+.catalog-toolbar {
+  justify-content: flex-start;
+  gap: 18px;
+}
+.catalog-count {
+  align-self: center;
+  font-size: 12px;
+  font-weight: 600;
+  color: #5e7a97;
+  background: #ffffffd9;
+  border-radius: 999px;
+  padding: 5px 14px;
+}
+
+/* ===== 首页模块链接：更大更醒目 ===== */
+.home-columns .section-head > a,
+.section .section-head > a {
+  font-size: 14px;
+  font-weight: 600;
+  color: #ffffff;
+  background: linear-gradient(135deg, #0a5bd3, #004098);
+  border-radius: 9px;
+  padding: 8px 18px;
+  box-shadow: 0 6px 14px #00409826;
+  transition:
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+.home-columns .section-head > a:hover,
+.section .section-head > a:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 20px #00409838;
+  color: #ffffff;
+}
+.home-columns .section-head > a::after,
+.section .section-head > a::after {
+  display: none;
+}
