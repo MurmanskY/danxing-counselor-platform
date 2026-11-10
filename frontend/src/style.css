@@ -5888,3 +5888,17 @@ body {
 .section .section-head > a::after {
   display: none;
 }
+
+/* ===== 首页模块按钮右缘微调 ===== */
+.section .section-head > a {
+  margin-right: 14px;
+}
+
+/* ===== 成长路线页：锚点滚动留出顶部导航高度 ===== */
+.routes-start {
+  scroll-margin-top: 110px;
+}
+.hero-actions button.primary {
+  border: 1px solid transparent;
+  cursor: pointer;
+}

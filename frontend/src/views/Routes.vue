@@ -8,8 +8,8 @@
           让育人积累被看见，让专业成长有路径。<br />在旦行，发现你的下一种可能。
         </p>
         <div class="hero-actions">
-          <router-link class="primary" to="/routes"
-            >探索成长路线 <span>↗</span></router-link
+          <button class="primary" @click="scrollToRoutes">
+            探索成长路线 <span>↗</span></button
           ><router-link class="light-button" to="/manage/plans"
             >我的发展计划 →</router-link
           >
@@ -32,7 +32,7 @@
         <p>{{ m.note }}</p>
       </router-link>
     </section>
-    <header class="page-heading">
+    <header ref="routesStart" class="page-heading routes-start">
       <p class="eyebrow">CHART YOUR OWN COURSE</p>
       <h1>每一次成长，都值得被看见</h1>
       <p>从你的阶段与兴趣出发，找到适合自己的下一步。</p>
@@ -102,6 +102,12 @@ export default {
   },
   methods: {
     newPlan,
+    scrollToRoutes() {
+      this.$refs.routesStart.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    },
     browse(kind) {
       this.$router.push(
         {

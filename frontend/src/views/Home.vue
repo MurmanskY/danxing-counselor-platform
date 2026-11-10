@@ -826,7 +826,7 @@
             <p class="eyebrow">MY NEXT STEP</p>
             <h2>近期成长安排</h2>
           </div>
-          <router-link to="/calendar">查看日历 ↗</router-link>
+          <router-link to="/calendar">查看发展日历 ↗</router-link>
         </div>
         <div v-if="upcoming.length">
           <button
