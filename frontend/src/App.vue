@@ -24,7 +24,7 @@
       </div>
       <form class="login-form" @submit.prevent="signIn">
         <p class="eyebrow">WELCOME BACK</p>
-        <h2>欢迎回到旦行无妨</h2>
+        <h2>旦行无妨</h2>
         <p class="muted">登录你的职业成长工作台</p>
         <label
           >账号<input
