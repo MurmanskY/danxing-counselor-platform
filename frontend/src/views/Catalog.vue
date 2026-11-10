@@ -97,12 +97,11 @@ const configs = {
     title: "荣誉殿堂",
     english: "HONORS & ACHIEVEMENTS",
     subtitle: "每一份荣誉背后，都是日复一日的用心育人。",
-    kinds: ["honor", "collective", "outcome"],
+    kinds: ["honor", "collective"],
     tabs: [
       ["", "全部荣誉"],
       ["honor", "个人荣誉"],
       ["collective", "集体荣誉"],
-      ["outcome", "育人成果"],
     ],
   },
   resources: {
