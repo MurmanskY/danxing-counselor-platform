@@ -103,7 +103,7 @@
       </div>
       <footer class="site-footer">
         <div><strong>旦行</strong><span>伴你走好育人路上的每一步</span></div>
-        <small>开发团队：王囡、杨娅雯、袁懿、王骏飞</small>
+        <small>开发团队：杨娅雯、袁懿、王骏飞</small>
       </footer>
       <nav class="mobile-nav">
         <router-link v-for="n in nav" :key="n.path" :to="n.path" exact
