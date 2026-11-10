@@ -185,10 +185,14 @@ export default {
       return [...new Set(this.base.map((r) => r.domain))].sort();
     },
     levels() {
+      if (this.section === "honors") return ["市级以上", "市级", "校级"];
       return [
         ...new Set(
           this.base
-            .map((r) => r.payload["荣誉级别"] || r.payload["级别"])
+            .map(
+              (r) =>
+                r.payload["奖励级别"] || r.payload["荣誉级别"] || r.payload["级别"],
+            )
             .filter(Boolean),
         ),
       ];
@@ -198,8 +202,7 @@ export default {
       return this.base.filter(
         (r) =>
           (!this.domain || r.domain === this.domain) &&
-          (!this.level ||
-            (r.payload["荣誉级别"] || r.payload["级别"]) === this.level) &&
+          (!this.level || this.honorLevelMatch(r)) &&
           (!q || JSON.stringify(r).toLowerCase().includes(q)),
       );
     },
@@ -229,6 +232,21 @@ export default {
     },
     visible() {
       return this.filtered.slice((this.page - 1) * 12, this.page * 12);
+    },
+  },
+  methods: {
+    honorLevelMatch(record) {
+      const raw = String(
+        record.payload["奖励级别"] ||
+          record.payload["荣誉级别"] ||
+          record.payload["级别"] ||
+          "",
+      );
+      if (this.section !== "honors") return raw === this.level;
+      if (this.level === "校级") return /校/.test(raw);
+      if (this.level === "市级") return raw === "市级";
+      // 市级以上：含市级以上、国家级、省级、部级
+      return /市级以上|国|省|部/.test(raw);
     },
   },
 };

@@ -5602,3 +5602,21 @@ body {
   overflow: hidden;
   flex: 0 0 auto;
 }
+
+/* ===== 管理员筛选栏：单行布局（去掉育人领域后） ===== */
+.manager-filterbar {
+  flex-wrap: nowrap;
+  overflow-x: visible;
+}
+.mf-search {
+  flex: 1 1 300px;
+  min-width: 0;
+}
+.mf-selects {
+  flex-wrap: nowrap;
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+.mf-selects select {
+  min-width: 96px;
+}

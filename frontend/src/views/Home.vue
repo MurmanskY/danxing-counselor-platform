@@ -30,12 +30,6 @@
               <option v-for="d in mgrDepartments" :key="d">{{ d }}</option>
             </select></label
           ><label
-            >育人领域
-            <select v-model="mgrDomain" aria-label="按育人领域筛选">
-              <option value="">全部领域</option>
-              <option v-for="d in mgrDomains" :key="d">{{ d }}</option>
-            </select></label
-          ><label
             >辅导员类型
             <select v-model="mgrType" aria-label="按辅导员类型筛选">
               <option value="">全部类型</option>
