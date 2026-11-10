@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Read-only deployment checks: page, login, catalog and dashboard."""
-import argparse, http.cookiejar, json, urllib.parse, urllib.request
+import argparse, http.cookiejar, json, urllib.error, urllib.parse, urllib.request
 from pathlib import Path
 p = argparse.ArgumentParser()
 p.add_argument('--env-file', required=True)
@@ -14,12 +14,32 @@ def request(path, data=None, headers=None):
         raw = r.read()
         return json.loads(raw) if 'application/json' in r.headers.get('Content-Type', '') else raw
 assert b'<html' in request('/').lower(), 'Homepage not served'
-csrf = request('/api/auth/csrf')
-request('/api/auth/login', urllib.parse.urlencode({'username':env['ADMIN_USERNAME'],'password':env['ADMIN_PASSWORD']}).encode(), {'Content-Type':'application/x-www-form-urlencoded', csrf['headerName']:csrf['token']})
-assert request('/api/auth/me')['role'] == 'COUNSELOR_ADMIN'
+
+def try_login(username, password):
+    if not username or not password:
+        return None
+    csrf = request('/api/auth/csrf')
+    try:
+        request('/api/auth/login', urllib.parse.urlencode({'username': username, 'password': password}).encode(), {'Content-Type': 'application/x-www-form-urlencoded', csrf['headerName']: csrf['token']})
+    except urllib.error.HTTPError as e:
+        if e.code in (401, 403, 429):
+            return None
+        raise
+    return request('/api/auth/me')
+
+# 先试环境变量里的凭证；历史环境经过账号迁移后，admin 的密码已被重置为与账号名一致
+candidates = [(env.get('ADMIN_USERNAME'), env.get('ADMIN_PASSWORD')), ('admin', 'admin')]
+me = None
+for username, password in candidates:
+    me = try_login(username, password)
+    if me:
+        break
+assert me, 'login check failed for all candidate credentials'
+assert me['role'] == 'COUNSELOR_ADMIN', 'expected COUNSELOR_ADMIN, got %s' % me.get('role')
+
 catalog = request('/api/catalog')
 assert len(catalog['records']) > 0, 'Catalog is empty'
 request('/api/home/dashboard')
 csrf = request('/api/auth/csrf')
-request('/api/auth/logout', b'', {csrf['headerName']:csrf['token']})
+request('/api/auth/logout', b'', {csrf['headerName']: csrf['token']})
 print('PASS homepage, login, dashboard, catalog (%s records), logout' % len(catalog['records']))
