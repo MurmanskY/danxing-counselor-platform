@@ -45,7 +45,7 @@ public class Bootstrap implements ApplicationRunner {
     @Override @Transactional public void run(ApplicationArguments args)throws Exception{
         jdbc.execute("SELECT pg_advisory_xact_lock(271002)");
         if(users.selectCount(new QueryWrapper<AppUser>())==0){
-            if(password==null||password.length()<12||password.getBytes(StandardCharsets.UTF_8).length>72)throw new IllegalStateException("ADMIN_PASSWORD must be 12 characters or more, and at most 72 UTF-8 bytes");
+            if(password==null||password.length()<4||password.getBytes(StandardCharsets.UTF_8).length>72)throw new IllegalStateException("ADMIN_PASSWORD must be at least 4 characters and at most 72 UTF-8 bytes");
             AppUser u=new AppUser();u.id=UUID.randomUUID().toString();u.username=username;u.passwordHash=encoder.encode(password);u.displayName="王静怡";u.role="COUNSELOR_ADMIN";u.createdAt=Instant.now();users.insert(u);
         }
         if(seedEnabled&&jdbc.queryForObject("SELECT count(*) FROM app_meta WHERE key='seed_version'",Integer.class)==0){
@@ -121,10 +121,10 @@ public class Bootstrap implements ApplicationRunner {
         if(!hasUsername&&!hasPassword)return;
         if(hasUsername!=hasPassword)throw new IllegalStateException(
             "COUNSELOR_" + profileId + "_USERNAME and COUNSELOR_" + profileId + "_PASSWORD must both be configured");
-        if(!accountUsername.matches("[A-Za-z0-9_.-]{3,60}"))
-            throw new IllegalStateException("COUNSELOR_" + profileId + "_USERNAME must be 3–60 letters, digits, or ._-");
-        if(accountPassword.length()<12||accountPassword.getBytes(StandardCharsets.UTF_8).length>72)
-            throw new IllegalStateException("COUNSELOR_" + profileId + "_PASSWORD must be at least 12 characters and at most 72 UTF-8 bytes");
+        if(!accountUsername.matches("[A-Za-z0-9_.-]{1,60}"))
+            throw new IllegalStateException("COUNSELOR_" + profileId + "_USERNAME must be 1–60 letters, digits, or ._-");
+        if(accountPassword.length()<4||accountPassword.getBytes(StandardCharsets.UTF_8).length>72)
+            throw new IllegalStateException("COUNSELOR_" + profileId + "_PASSWORD must be at least 4 characters and at most 72 UTF-8 bytes");
 
         Integer profileCount=jdbc.queryForObject("""
             SELECT count(*) FROM counselor_profiles

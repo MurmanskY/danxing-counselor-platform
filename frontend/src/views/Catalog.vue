@@ -153,12 +153,18 @@ export default {
   data() {
     return {
       state,
-      tab: this.section === "people" ? "detail" : "",
+      tab: this.section === "people" ? "detail" : this.$route.query.tab || "",
       query: "",
       domain: "",
       level: "",
       page: 1,
     };
+  },
+  watch: {
+    "$route.query.tab"(next) {
+      this.tab = next || (this.section === "people" ? "detail" : "");
+      this.page = 1;
+    },
   },
   computed: {
     info() {

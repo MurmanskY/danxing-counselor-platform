@@ -500,7 +500,7 @@
             </div>
           </div>
           <button class="light-button" @click="showRecord(activeProfile)">
-            查看完整画像 ↗
+            查看学工队伍系统个人数据
           </button>
         </div>
       </header>
@@ -616,19 +616,20 @@
           <span class="showcase-icon gold">🏆</span>
           <h2>代表性荣誉</h2>
           <p>展示个人获得的重要荣誉奖项</p>
-          <router-link to="/honors">查看更多 ›</router-link>
         </div>
-        <div v-if="linkedHonors.length" class="honor-grid">
-          <article v-for="h in linkedHonors.slice(0, 4)" :key="h.id" class="honor-card">
-            <span class="honor-trophy">🏆</span>
-            <div>
-              <span class="honor-year">{{ honorYear(h) }}</span>
-              <strong>{{ h.title }}</strong>
-              <small>{{
-                h.payload["光荣册历史单位"] || h.department || "授予单位待补充"
-              }}</small>
-            </div>
-          </article>
+        <div v-if="linkedHonors.length" class="showcase-scroll">
+          <div class="honor-grid">
+            <article v-for="h in linkedHonors" :key="h.id" class="honor-card">
+              <span class="honor-trophy">🏆</span>
+              <div>
+                <span class="honor-year">{{ honorYear(h) }}</span>
+                <strong>{{ h.title }}</strong>
+                <small>{{
+                  h.payload["光荣册历史单位"] || h.department || "授予单位待补充"
+                }}</small>
+              </div>
+            </article>
+          </div>
         </div>
         <p v-else class="muted chart-empty">暂无关联荣誉记录。</p>
       </div>
@@ -637,21 +638,33 @@
           <span class="showcase-icon orange">🎓</span>
           <h2>育人成果</h2>
           <p>在工作中形成的典型成果</p>
-          <router-link to="/resources">查看更多 ›</router-link>
         </div>
-        <div class="stat-grid">
-          <div
-            v-for="s in outcomeStats"
-            :key="s.label"
-            class="stat-card"
-            :class="{ 'is-zero': Number(s.value) === 0 }"
-          >
-            <span class="stat-icon">{{ s.icon }}</span>
-            <div>
-              <strong><CountUp :value="s.value" /></strong>
-              <span>{{ s.label }}</span>
-              <small>{{ s.sub }}</small>
-              <span class="stat-bar"><i :style="{ width: barWidth(s.value) + '%' }"></i></span>
+        <div class="showcase-scroll">
+          <div class="stat-grid">
+            <div
+              v-for="s in outcomeStats"
+              :key="s.label"
+              class="stat-card"
+              :class="{ 'is-zero': Number(s.value) === 0 }"
+            >
+              <span class="stat-icon">{{ s.icon }}</span>
+              <div>
+                <strong><CountUp :value="s.value" /></strong>
+                <span>{{ s.label }}</span>
+                <small>{{ s.sub }}</small>
+                <span class="stat-bar"><i :style="{ width: barWidth(s.value) + '%' }"></i></span>
+              </div>
+            </div>
+          </div>
+          <div v-if="outcomeGroups.length" class="outcome-groups">
+            <div v-for="g in outcomeGroups" :key="g.label" class="outcome-group">
+              <div class="outcome-group-head">
+                <span class="outcome-badge" :class="g.cls">{{ g.icon }} {{ g.label }}</span>
+                <span class="outcome-count">{{ g.items.length }}</span>
+              </div>
+              <ul class="outcome-items">
+                <li v-for="(item, i) in g.items" :key="i">{{ item }}</li>
+              </ul>
             </div>
           </div>
         </div>
@@ -661,25 +674,26 @@
           <span class="showcase-icon blue">🏠</span>
           <h2>工作室与资源</h2>
           <p>参与的工作室及主要资源</p>
-          <router-link to="/resources">查看更多 ›</router-link>
         </div>
-        <div v-if="studioView" class="studio-block">
-          <div class="studio-title-row">
-            <span class="studio-sprout">🌱</span>
-            <strong>{{ studioView.name }}</strong>
-            <span v-if="studioRole" class="tag">{{ studioRole }}</span>
+        <div v-if="studioView" class="showcase-scroll">
+          <div class="studio-block">
+            <div class="studio-title-row">
+              <span class="studio-sprout">🌱</span>
+              <strong>{{ studioView.name }}</strong>
+              <span v-if="studioRole" class="tag">{{ studioRole }}</span>
+            </div>
+            <p class="studio-direction">方向：{{ studioView.direction }}</p>
+            <p v-if="studioView.desc" class="studio-desc">
+              {{ studioView.desc }}
+            </p>
+            <ul class="studio-stats">
+              <li v-for="r in studioResourceStats" :key="r.label">
+                <span class="stat-icon small">{{ r.icon }}</span>
+                <span>{{ r.label }}</span>
+                <strong>{{ r.value }}<small> {{ r.unit }}</small></strong>
+              </li>
+            </ul>
           </div>
-          <p class="studio-direction">方向：{{ studioView.direction }}</p>
-          <p v-if="studioView.desc" class="studio-desc">
-            {{ studioView.desc }}
-          </p>
-          <ul class="studio-stats">
-            <li v-for="r in studioResourceStats" :key="r.label">
-              <span class="stat-icon small">{{ r.icon }}</span>
-              <span>{{ r.label }}</span>
-              <strong>{{ r.value }}<small> {{ r.unit }}</small></strong>
-            </li>
-          </ul>
         </div>
         <p v-else class="muted chart-empty">
           暂未关联工作室，可在画像「工作室名称」等字段填写参与的工作室。
@@ -798,12 +812,12 @@
       </div>
     </section>
     <section class="metrics">
-      <div v-for="m in metrics" :key="m.label">
+      <router-link v-for="m in metrics" :key="m.label" :to="m.to" class="metric-cell">
         <span class="metric-icon" :style="{ background: m.bg }">{{ m.icon }}</span
         ><span>{{ m.label }}</span
         ><strong><CountUp :value="m.value" /><small> 条</small></strong>
         <p>{{ m.note }}</p>
-      </div>
+      </router-link>
     </section>
     <div v-if="!isManager" class="home-columns">
       <section class="panel">
@@ -862,7 +876,7 @@
         <h2>同行的力量</h2>
         <p>认识育人伙伴，发现多元成长路径。</p>
       </div>
-      <button v-for="p in people" :key="p.id" @click="showRecord(p)">
+      <button v-for="p in people" :key="p.id" class="person-static">
         <img
           v-if="profileAvatarUrl(p.id)"
           class="person-avatar avatar-img"
@@ -1171,10 +1185,10 @@ export default {
     },
     metrics() {
       return [
-        { label: "个人荣誉", kind: "honor", note: "记录育人路上的闪光", icon: "🏆", bg: "#fff4dc" },
-        { label: "集体荣誉", kind: "collective", note: "汇聚共同前行的力量", icon: "🤝", bg: "#e9f2ff" },
-        { label: "育人成果", kind: "outcome", note: "分享可借鉴的实践", icon: "🌟", bg: "#e5f8ee" },
-        { label: "育人工作室", kind: "studio", note: "连接专业发展伙伴", icon: "🏠", bg: "#f0ebff" },
+        { label: "个人荣誉", kind: "honor", note: "记录育人路上的闪光", icon: "🏆", bg: "#fff4dc", to: { path: "/honors", query: { tab: "honor" } } },
+        { label: "集体荣誉", kind: "collective", note: "汇聚共同前行的力量", icon: "🤝", bg: "#e9f2ff", to: { path: "/honors", query: { tab: "collective" } } },
+        { label: "育人成果", kind: "outcome", note: "分享可借鉴的实践", icon: "🌟", bg: "#e5f8ee", to: { path: "/resources", query: { tab: "outcome" } } },
+        { label: "育人工作室", kind: "studio", note: "连接专业发展伙伴", icon: "🏠", bg: "#f0ebff", to: { path: "/resources", query: { tab: "studio" } } },
       ].map((m) => ({
         ...m,
         value: state.records.filter((r) => r.kind === m.kind).length,
@@ -1284,6 +1298,24 @@ export default {
         { icon: "🔬", value: this.entryCount(p.payload["科研项目"]), label: "育人项目", sub: "科研与育人项目" },
         { icon: "🌱", value: this.entryCount(p.payload["培训经历"]), label: "培训研修", sub: "校内外培训交流" },
       ];
+    },
+    outcomeGroups() {
+      const p = this.activeProfile;
+      if (!p) return [];
+      const splitLines = (field, pattern) => {
+        const raw = String(p.payload[field] || "").trim();
+        if (!raw || raw === "无") return [];
+        return raw
+          .split(pattern || /\n+/)
+          .map((s) => s.trim())
+          .filter((s) => s && s !== "无");
+      };
+      return [
+        { label: "发表论文", icon: "📄", cls: "paper", items: splitLines("发表论文") },
+        { label: "发表著作", icon: "📚", cls: "book", items: splitLines("发表著作") },
+        { label: "育人项目", icon: "🔬", cls: "project", items: splitLines("科研项目") },
+        { label: "培训研修", icon: "🎓", cls: "training", items: splitLines("培训经历", /[\n；;]+/) },
+      ].filter((g) => g.items.length);
     },
     myStudio() {
       const p = this.activeProfile;

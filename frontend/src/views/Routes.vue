@@ -25,12 +25,12 @@
       </div>
     </section>
     <section class="metrics">
-      <div v-for="m in metrics" :key="m.label">
+      <router-link v-for="m in metrics" :key="m.label" :to="m.to" class="metric-cell">
         <span class="metric-icon" :style="{ background: m.bg }">{{ m.icon }}</span
         ><span>{{ m.label }}</span
         ><strong><CountUp :value="m.value" /><small> 条</small></strong>
         <p>{{ m.note }}</p>
-      </div>
+      </router-link>
     </section>
     <header class="page-heading">
       <p class="eyebrow">CHART YOUR OWN COURSE</p>
@@ -90,10 +90,10 @@ export default {
   computed: {
     metrics() {
       return [
-        { label: "个人荣誉", kind: "honor", note: "记录育人路上的闪光", icon: "🏆", bg: "#fff4dc" },
-        { label: "集体荣誉", kind: "collective", note: "汇聚共同前行的力量", icon: "🤝", bg: "#e9f2ff" },
-        { label: "育人成果", kind: "outcome", note: "分享可借鉴的实践", icon: "🌟", bg: "#e5f8ee" },
-        { label: "育人工作室", kind: "studio", note: "连接专业发展伙伴", icon: "🏠", bg: "#f0ebff" },
+        { label: "个人荣誉", kind: "honor", note: "记录育人路上的闪光", icon: "🏆", bg: "#fff4dc", to: { path: "/honors", query: { tab: "honor" } } },
+        { label: "集体荣誉", kind: "collective", note: "汇聚共同前行的力量", icon: "🤝", bg: "#e9f2ff", to: { path: "/honors", query: { tab: "collective" } } },
+        { label: "育人成果", kind: "outcome", note: "分享可借鉴的实践", icon: "🌟", bg: "#e5f8ee", to: { path: "/resources", query: { tab: "outcome" } } },
+        { label: "育人工作室", kind: "studio", note: "连接专业发展伙伴", icon: "🏠", bg: "#f0ebff", to: { path: "/resources", query: { tab: "studio" } } },
       ].map((m) => ({
         ...m,
         value: state.records.filter((r) => r.kind === m.kind).length,
