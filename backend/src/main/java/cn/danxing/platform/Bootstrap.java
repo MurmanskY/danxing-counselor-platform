@@ -59,6 +59,7 @@ public class Bootstrap implements ApplicationRunner {
             jdbc.update("INSERT INTO app_meta(key,value) VALUES ('seed_version','original-567-v1')");
         }
         applyDataFixes();
+        migrateAccounts();
         ensureCounselorProfiles();
         jdbc.update("""
             UPDATE app_users u SET profile_id=cp.profile_id
@@ -87,6 +88,26 @@ public class Bootstrap implements ApplicationRunner {
         // 历史环境已创建过显示名为"汤潮"的管理员账号的，自动纠正为王静怡并强制重设头像
         int renamed=jdbc.update("UPDATE app_users SET display_name='王静怡' WHERE role='COUNSELOR_ADMIN' AND display_name='汤潮'");
         seedBundledAvatars(renamed>0);
+    }
+
+    /** 账号迁移（一次性）：历史环境的 counselor-p001~p006 改名为 p001~p006，并将全部账号密码重置为与账号名一致。 */
+    private void migrateAccounts(){
+        try{
+            Integer done=jdbc.queryForObject("SELECT count(*) FROM app_meta WHERE key='accounts_v2_migrated'",Integer.class);
+            if(done!=null&&done>0)return;
+            int renamed=0;
+            for(int i=1;i<=6;i++){
+                String neo="p00"+i,old="counselor-p00"+i;
+                renamed+=jdbc.update("UPDATE app_users SET username=? WHERE username=? AND NOT EXISTS (SELECT 1 FROM app_users u2 WHERE u2.username=?)",neo,old,neo);
+            }
+            for(String u:List.of("admin","p001","p002","p003","p004","p005","p006")){
+                jdbc.update("UPDATE app_users SET password_hash=? WHERE username=?",encoder.encode(u),u);
+            }
+            jdbc.update("INSERT INTO app_meta(key,value) VALUES ('accounts_v2_migrated','1') ON CONFLICT (key) DO NOTHING");
+            log.info("账号迁移完成：重命名 {} 个账号，密码已重置为与账号名一致",renamed);
+        }catch(Exception e){
+            log.warn("账号迁移执行失败（不影响系统启动）：{}",e.toString());
+        }
     }
 
     /** 数据修正（幂等）：每次启动自动执行，仅当字段缺失或为“无”时补齐，不会覆盖已有真实数据。 */
@@ -157,8 +178,10 @@ public class Bootstrap implements ApplicationRunner {
             if("COUNSELOR".equals(existing.role)&&List.of("P001","P002","P003","P004","P005","P006").contains(existing.profileId)){
                 Integer targetAccountCount=jdbc.queryForObject(
                     "SELECT count(*) FROM app_users WHERE profile_id=? AND role='COUNSELOR'",Integer.class,profileId);
-                if(targetAccountCount!=null&&targetAccountCount>0)throw new IllegalStateException(
-                    "Cannot link " + accountUsername + " to profile " + profileId + ": that profile is already linked to another account");
+                if(targetAccountCount!=null&&targetAccountCount>0){
+                    log.info("画像 {} 已关联其他账号，跳过账号 {} 的关联",profileId,accountUsername);
+                    return;
+                }
                 jdbc.update("""
                     UPDATE app_users SET profile_id=?, display_name=(
                       SELECT title FROM source_records WHERE id=?
@@ -170,8 +193,10 @@ public class Bootstrap implements ApplicationRunner {
         }
         Integer accountCount=jdbc.queryForObject(
             "SELECT count(*) FROM app_users WHERE profile_id=? AND role='COUNSELOR'",Integer.class,profileId);
-        if(accountCount!=null&&accountCount>0)throw new IllegalStateException(
-            "Cannot create the counselor account: profile " + profileId + " is already linked to another account");
+        if(accountCount!=null&&accountCount>0){
+            log.info("画像 {} 已关联账号，跳过账号 {} 的创建",profileId,accountUsername);
+            return;
+        }
 
         String displayName=jdbc.queryForObject("SELECT title FROM source_records WHERE id=?",String.class,profileId);
         AppUser user=new AppUser();
